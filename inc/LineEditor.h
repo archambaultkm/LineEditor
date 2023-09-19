@@ -10,12 +10,12 @@
 class LineEditor {
 public:
     LineEditor();
-    int getSize();
-    void search(std::string query);
+    int getSize() const;
+    void updateLineNumbers();
     void insertLine(int line_num, std::string text);
     void editLine(int position, std::string text);
+    void deleteRange(int range_start, int range_end);
     void deleteLine(int position);
-    void updateLineNumbers();
     void printRange(int range_start, int range_end);
     void printLine(int line_num);
     friend std::ostream& operator<<(std::ostream& output, LineEditor document);
