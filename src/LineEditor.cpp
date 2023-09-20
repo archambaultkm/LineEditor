@@ -74,7 +74,7 @@ void LineEditor::editLine(int line_num, std::string new_text) {
 }
 
 //TODO do you actually need this or the listRange functions
-//call the delete line functino for a given range of lines
+//call the delete line function for a given range of lines
 void LineEditor::deleteRange(int range_start, int range_end) {
     if (range_start > range_end) {
         int temp = range_end;
@@ -106,7 +106,6 @@ void LineEditor::deleteLine(int line_num) {
         temp = head;
         head = head->link;
         delete temp;
-        updateLineNumbers();
 
     } else if (line_num == size) {
         temp = curr;
@@ -118,10 +117,10 @@ void LineEditor::deleteLine(int line_num) {
     } else {
         if (prev != nullptr && curr != nullptr) prev->link = curr->link;
         delete curr;
-        updateLineNumbers();
     }
 
     //update the size value of the document to reflect the deletion
+    updateLineNumbers();
     size--;
 }
 
@@ -161,14 +160,7 @@ void LineEditor::printRange(int range_start, int range_end) {
         range_start = temp;
     }
 
-    //Line * curr = head;
-    //get to the start of the range to print in the list
-    //while (curr != nullptr && curr->position != range_start) curr = curr->link;
-
     for (int i=range_start;i<=range_end;i++) {
-//        std::cout << curr->position << "> " << curr->data << std::endl;
-//        curr = curr->link;
-        //TODO this might be stupid inefficient, maybe just go back to above
         printLine(i);
     }
 }
