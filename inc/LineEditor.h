@@ -11,6 +11,7 @@ class LineEditor {
 public:
     LineEditor();
     int getLastLine() const;
+    std::string getLine(int line_num);
     void updateLineNumbers();
     void insertLine(int line_num, std::string text);
     void editLine(int position, std::string text);

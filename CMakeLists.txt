@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(assignment1
         src/main.cpp
         src/LineEditor.cpp
-        inc/LineEditor.h)
+        inc/LineEditor.h
+        src/FileManager.cpp
+        inc/FileManager.h)

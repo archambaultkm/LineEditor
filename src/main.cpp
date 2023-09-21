@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include "../inc/LineEditor.h"
+#include "../inc/FileManager.h"
 
 using namespace std;
 
@@ -24,13 +25,13 @@ Operations resolveOperations(const string& input) {
     return Operation_Invalid;
 }
 
+//TODO this is awful
 bool isValidOperation(const vector<string>& args) {
     //check that the first argument is a valid operation, then check if other args can be parsed to ints.
     //whether the number is a valid line number or not will be handled by the LineEditor class
     if (!args.empty() && resolveOperations(args.at(0)) != Operation_Invalid) {
         if (args.size() > 3) return false;
         if (args.size() > 1 && args.size() <= 3) {
-            //TODO this is awful
             if (args.size() == 2) {
                 char * p;
                 strtol(args.at(1).c_str(), &p, 10);
@@ -50,14 +51,28 @@ bool isValidOperation(const vector<string>& args) {
 }
 
 int main() {
-
     LineEditor line_editor;
-    string user_input; //, operation
     Operations operation;
-    int last_line, working_line = 1;
+    string user_input, file_name, file_line;
+    int last_line, working_line = 1, file_line_num = 1;
 
-    //TODO start of program, take file name argument and load/create that file
-    //TODO if file isn't empty, take each line and insert into line editor
+    //take file name argument and load/create that file
+    cout << "Enter file name (.txt extension only): ";
+    getline(cin, file_name);
+
+    FileManager file_manager(file_name);
+
+    //load file contents to stream to move to line editor
+    file_manager.readStreamFromFile();
+    stringstream file_contents = file_manager.getFileContents();
+
+    while (getline(file_contents, file_line)) {
+        line_editor.insertLine(file_line_num, file_line);
+        file_line_num++;
+    }
+
+    working_line = file_line_num;
+    cout << line_editor;
 
     do {
         //update displayed line based on data from line editor for readability
@@ -69,7 +84,7 @@ int main() {
         getline(cin, user_input);
         istringstream ss(user_input);
 
-        //send ss content to vector for easy parsing
+        //send file_contents_stream content to vector for easy parsing
         vector<string> args;
         string arg;
         while (ss >> arg) args.push_back(arg);
@@ -163,9 +178,17 @@ int main() {
                 break;
 
         }//end switch operations
-    } while (operation != Exit);//end while loop
+    } while (operation != Exit);
 
-    //TODO here save to file
+    //file_contents should be empty but clear just in case
+    file_contents.clear();
+
+    //save to file
+    for (int i=1;i<line_editor.getLastLine();i++) {
+        file_contents << line_editor.getLine(i) << endl;
+    }
+
+    file_manager.writeStreamToFile(std::move(file_contents));
     cout << "Exiting application..." << endl;
 
     return 0;

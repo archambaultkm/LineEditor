@@ -17,6 +17,15 @@ int LineEditor::getLastLine() const {
     return size + 1;
 }
 
+
+std::string LineEditor::getLine(int line_num) {
+    Line * curr = head;
+
+    //get to the desired line to print
+    while (curr != nullptr && curr->position != line_num) curr = curr->next;
+    return curr->data;
+}
+
 //insert a new line into the linked list, and update line numbers on existing nodes
 void LineEditor::insertLine(int line_num, std::string text) {
     if (line_num <= 0 || line_num > size + 1) return;
@@ -84,7 +93,8 @@ void LineEditor::deleteRange(int range_start, int range_end) {
     }
 
     for (int i=range_start;i<=range_end;i++) {
-        deleteLine(i);
+        //since the line numbers are updated in the deleteLine function, delete the "same" line x times
+        deleteLine(range_start);
     }
 }
 
@@ -173,4 +183,3 @@ void LineEditor::printLine(int line_num) {
     while (curr != nullptr && curr->position != line_num) curr = curr->next;
     std::cout << curr->position << "> " << curr->data << std::endl;
 }
-
