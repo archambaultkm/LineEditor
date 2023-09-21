@@ -10,7 +10,7 @@
 class LineEditor {
 public:
     LineEditor();
-    int getSize() const;
+    int getLastLine() const;
     void updateLineNumbers();
     void insertLine(int line_num, std::string text);
     void editLine(int position, std::string text);
@@ -25,7 +25,7 @@ private:
     struct Line {
         int position;
         std::string data;
-        Line * link;
+        Line * next;
     };
     int size;
     Line * head;
