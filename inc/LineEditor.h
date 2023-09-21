@@ -10,6 +10,7 @@
 class LineEditor {
 public:
     LineEditor();
+    LineEditor(std::stringstream stream_contents);
     int getLastLine() const;
     std::string getLine(int line_num);
     void updateLineNumbers();

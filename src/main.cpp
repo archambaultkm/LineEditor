@@ -51,47 +51,39 @@ bool isValidOperation(const vector<string>& args) {
 }
 
 int main() {
-    LineEditor line_editor;
+    //LineEditor line_editor;
     Operations operation;
-    string user_input, file_name, file_line;
-    int last_line, working_line = 1, file_line_num = 1;
+    string user_input, file_name;
+    int working_line = 1;
 
     //take file name argument and load/create that file
     cout << "Enter file name (.txt extension only): ";
     getline(cin, file_name);
 
-    FileManager file_manager(file_name);
-
     //load file contents to stream to move to line editor
-    file_manager.readStreamFromFile();
-    stringstream file_contents = file_manager.getFileContents();
+    FileManager file_manager(file_name);
+    stringstream file_contents = file_manager.readStreamFromFile();
+    LineEditor line_editor(std::move(file_contents));
 
-    while (getline(file_contents, file_line)) {
-        line_editor.insertLine(file_line_num, file_line);
-        file_line_num++;
-    }
-
-    working_line = file_line_num;
+    working_line = line_editor.getLastLine();
     cout << line_editor;
 
     do {
-        //update displayed line based on data from line editor for readability
-        last_line = line_editor.getLastLine();
-        int range_start = 0, range_end = 0;
-
         //take user input and try to parse to a valid command
         cout << working_line << "> ";
         getline(cin, user_input);
-        istringstream ss(user_input);
+        istringstream input_stream(user_input);
 
         //send file_contents_stream content to vector for easy parsing
         vector<string> args;
         string arg;
-        while (ss >> arg) args.push_back(arg);
+        while (input_stream >> arg) args.push_back(arg);
         if (args.empty()) continue;
 
         //assign operation and line number arguments
         //TODO this is messy
+        int range_start = 0, range_end = 0;
+
         operation = resolveOperations(args.at(0));
         if (isValidOperation(args)) {
             if (args.size() >= 2) {
@@ -152,11 +144,10 @@ int main() {
                 } else if (range_start != 0) {
                     line_editor.deleteLine(range_start);
                 } else {
-                    line_editor.deleteLine(last_line - 1);
+                    line_editor.deleteLine(line_editor.getLastLine() - 1);
                 }
 
-                //reset the working line to end of doc
-                //working_line = last_line;
+                //adjust working line if a line before it was deleted
                 if (working_line >= range_start) working_line--;
 
                 break;
@@ -172,7 +163,7 @@ int main() {
                 } else {
                     cout << line_editor;
                     //reset the working line to end of doc
-                    working_line = last_line;
+                    working_line = line_editor.getLastLine();
                 }
 
                 break;
@@ -180,15 +171,13 @@ int main() {
         }//end switch operations
     } while (operation != Exit);
 
-    //file_contents should be empty but clear just in case
-    file_contents.clear();
-
     //save to file
-    for (int i=1;i<line_editor.getLastLine();i++) {
-        file_contents << line_editor.getLine(i) << endl;
+    stringstream editor_contents;
+    for (int i=1; i<line_editor.getLastLine(); i++) {
+        editor_contents << line_editor.getLine(i) << endl;
     }
+    file_manager.writeStreamToFile(std::move(editor_contents));
 
-    file_manager.writeStreamToFile(std::move(file_contents));
     cout << "Exiting application..." << endl;
 
     return 0;

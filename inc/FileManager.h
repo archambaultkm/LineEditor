@@ -12,14 +12,11 @@
 class FileManager {
 public:
     explicit FileManager(std::string file_name);
-    std::stringstream getFileContents();
-    int getFileLines() const;
-    void readStreamFromFile();
+    std::stringstream readStreamFromFile();
     void writeStreamToFile(std::stringstream ss);
 
 private:
     std::string file_name;
-    int file_lines;
     std::ifstream ifs;
     std::ofstream ofs;
     std::stringstream file_contents_stream;

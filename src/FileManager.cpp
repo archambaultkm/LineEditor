@@ -9,19 +9,9 @@
 
 FileManager::FileManager(std::string file_name) {
     this->file_name = std::move(file_name);
-    file_lines = 0;
 }
 
-
-int FileManager::getFileLines() const {
-    return file_lines;
-}
-
-std::stringstream FileManager::getFileContents() {
-    return std::move(file_contents_stream);
-}
-
-void FileManager::readStreamFromFile() {
+std::stringstream FileManager::readStreamFromFile() {
     std::string file_line;
 
     try {
@@ -35,7 +25,6 @@ void FileManager::readStreamFromFile() {
         //take each line from file (even if empty) and insert into line editor
         while (getline(ifs, file_line)) {
             file_contents_stream << file_line << std::endl;
-            file_lines ++;
         }
 
     }  catch (std::ifstream::failure &e) {
@@ -43,6 +32,8 @@ void FileManager::readStreamFromFile() {
     }
 
     ifs.close();
+
+    return std::move(file_contents_stream);
 }
 
 void FileManager::writeStreamToFile(std::stringstream ss) {

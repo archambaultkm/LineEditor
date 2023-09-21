@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <utility>
+#include <sstream>
 #include "../inc/LineEditor.h"
 
 
@@ -11,6 +12,16 @@ LineEditor::LineEditor() {
     size = 0;
     head = nullptr;
     tail = nullptr;
+}
+
+LineEditor::LineEditor(std::stringstream stream_contents) {
+    head = nullptr;
+    tail = nullptr;
+
+    std::string line;
+    while (getline(stream_contents, line)) {
+        this->insertLine(size+1, line);
+    }
 }
 
 int LineEditor::getLastLine() const {
