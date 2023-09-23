@@ -2,7 +2,7 @@
 // Created by Kaitlyn Archambault on 2023-09-22.
 //
 
-#include "LinkedList.h"
+#include "../inc/LinkedList.h"
 #include <iostream>
 
 LinkedList::LinkedList() {

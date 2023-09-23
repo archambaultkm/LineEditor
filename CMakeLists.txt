@@ -9,6 +9,6 @@ add_executable(assignment1
         inc/LineEditor.h
         src/FileManager.cpp
         inc/FileManager.h
-        inc/LinkedList.cpp
+        src/LinkedList.cpp
         inc/LinkedList.h
 )
