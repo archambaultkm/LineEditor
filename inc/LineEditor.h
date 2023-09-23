@@ -5,33 +5,38 @@
 #ifndef ASSIGNMENT1_LINEEDITOR_H
 #define ASSIGNMENT1_LINEEDITOR_H
 
-#include <string>
+#include"../inc/LinkedList.h"
 
-class LineEditor {
+class LineEditor : LinkedList {
 public:
     LineEditor();
-    LineEditor(std::stringstream stream_contents);
+    virtual ~LineEditor();
+    //explicit LineEditor(std::stringstream stream_contents);
     int getLastLine() const;
+    int getWorkingLine() const;
     std::string getLine(int line_num);
-    void updateLineNumbers();
-    void insertLine(int line_num, std::string text);
-    void editLine(int position, std::string text);
-    void deleteRange(int range_start, int range_end);
-    void deleteLine(int position);
-    void printRange(int range_start, int range_end);
+    bool isEditing();
+    static bool isValidOperation(const std::string& input);
+    void initOperations(const std::string& input);
+    void initContents(std::stringstream stream_contents);
+    void execute(const std::string& input);
     void printLine(int line_num);
-    friend std::ostream& operator<<(std::ostream& output, LineEditor document);
 
 private:
-    //nested struct contains individual lines of text + position in doc, functions as linked list node.
-    struct Line {
-        int position;
-        std::string data;
-        Line * next;
+    enum Operations {
+        Operation_Invalid,
+        Insert,
+        Revise,
+        Delete,
+        List,
+        Exit
     };
-    int size;
-    Line * head;
-    Line * tail;
+    static Operations resolveOperations(const std::string& input);
+    Operations operation;
+    std::string user_input;
+    int range_start;
+    int range_end;
+    int working_line;
 };
 
 

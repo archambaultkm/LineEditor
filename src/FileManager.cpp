@@ -15,7 +15,7 @@ std::stringstream FileManager::readStreamFromFile() {
     std::string file_line;
 
     try {
-        ifs.open(file_name, std::fstream::in );
+        ifs.open(file_name, std::fstream::in);
 
         if (ifs.fail()) {
             std::cout << "Could not open file.";
