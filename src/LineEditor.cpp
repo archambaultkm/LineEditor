@@ -117,7 +117,7 @@ void LineEditor::execute(const std::string& input) {
             break;
 
         case Revise:
-            //TODO I think it will be hard to decouple io for this:
+            //I think decoupling io for this is more work than it's worth
             std::cout << range_start << "> ";
             getline(std::cin, user_input);
 
@@ -128,8 +128,8 @@ void LineEditor::execute(const std::string& input) {
         case Delete:
             if (range_start <= 0 || range_start > size) break;
             for (int i=range_start; i<=range_end; i++) this->deleteNode(range_start);
+
             //adjust working line if a line before it was deleted
-            //TODO there has to be a better way of managing the working line
             if (working_line >= range_end) {
                 if (range_end - range_start != 0)
                     working_line = working_line - (range_end - range_start);
@@ -147,7 +147,7 @@ void LineEditor::execute(const std::string& input) {
                 this->printLine(i);
             }
 
-            working_line = size+1;
+            working_line = range_end+1;
 
             break;
     }//end switch operations
@@ -182,6 +182,7 @@ void LineEditor::writeToFile(std::string file_name) {
     std::string file_line;
 
     try {
+        //trunc: completely overwrite the old file
         ofs.open(file_name, std::fstream::trunc );
 
         if (ofs.fail()) {
