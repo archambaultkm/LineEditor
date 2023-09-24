@@ -21,7 +21,7 @@ void LinkedList::insertNode(int line_num, std::string data) {
 
     //If the data is being inserted at the end of the linked list
     if (line_num == size + 1) {
-        temp->position = size + 1;
+        temp->position = line_num;
         temp->next = nullptr;
 
         if (size == 0) {
@@ -137,6 +137,8 @@ std::string LinkedList::getNodeData(int position) {
 
     //get to the desired line to print
     while (curr != nullptr && curr->position != position) curr = curr->next;
+
+    if (curr == nullptr) return "";
 
     return curr->data;
 }

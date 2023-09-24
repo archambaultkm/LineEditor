@@ -7,7 +7,11 @@
 #include <utility>
 
 
-FileManager::FileManager(std::string file_name) {
+FileManager::FileManager() {
+    file_name = "";
+}
+
+void FileManager::setFileName(std::string file_name) {
     this->file_name = std::move(file_name);
 }
 
@@ -56,3 +60,5 @@ void FileManager::writeStreamToFile(std::stringstream ss) {
 
     ofs.close();
 }
+
+FileManager::~FileManager() = default;

@@ -11,9 +11,11 @@
 
 class FileManager {
 public:
-    explicit FileManager(std::string file_name);
+    FileManager();
+    virtual ~FileManager();
     std::stringstream readStreamFromFile();
     void writeStreamToFile(std::stringstream ss);
+    void setFileName(std::string file_name);
 
 private:
     std::string file_name;

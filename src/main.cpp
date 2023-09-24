@@ -1,8 +1,5 @@
 #include <iostream>
-#include <sstream>
-#include <vector>
 #include "../inc/LineEditor.h"
-#include "../inc/FileManager.h"
 
 using namespace std;
 
@@ -14,17 +11,11 @@ int main(int argc, char *argv[]) {
         file_name = argv[2];
     }
 
-    //TODO move into editor class
-    //load file contents to stream to move to line editor
-    FileManager file_manager(file_name);
-    stringstream file_contents = file_manager.readStreamFromFile();
-    LineEditor line_editor;
-
-    line_editor.initContents(std::move(file_contents));
+    LineEditor line_editor(file_name);
 
     //TODO this should probably be in the init function
     //show them the document they're working with at the start of the program
-    for (int i=1; i<line_editor.getLastLine(); i++)
+    for (int i=1; i<=line_editor.getSize(); i++)
         line_editor.printLine(i);
 
     do {
@@ -35,15 +26,7 @@ int main(int argc, char *argv[]) {
 
     } while (line_editor.isEditing());
 
-    //TODO move to editor class
-    //save to file
-    stringstream editor_contents;
-    for (int i=1; i<line_editor.getLastLine(); i++) {
-        editor_contents << line_editor.getLine(i) << endl;
-    }
-
-    file_manager.writeStreamToFile(std::move(editor_contents));
-    cout << "Contents saved to " << file_name << endl;
+    std::cout << "Contents saved to " << file_name << endl;
     cout << "Exiting application..." << endl;
 
     return 0;
