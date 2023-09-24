@@ -6,11 +6,11 @@
 #define ASSIGNMENT1_LINEEDITOR_H
 
 #include"../inc/LinkedList.h"
-#include"../inc/FileManager.h"
+#include <fstream>
 
 class LineEditor : LinkedList {
 private:
-    enum Operations {
+    enum Operation {
         Operation_Invalid,
         Insert,
         Revise,
@@ -18,23 +18,26 @@ private:
         List,
         Exit
     };
-    static Operations resolveOperations(const std::string& input);
-    Operations operation;
+    static Operation resolveOperations(const std::string& input);
+    Operation operation;
     std::string user_input;
-    FileManager file_manager;
+    std::string file_name;
+    std::ifstream ifs;
+    std::ofstream ofs;
     int range_start;
     int range_end;
     int working_line;
 
 public:
-    virtual ~LineEditor();
-    explicit LineEditor(std::string file_name);
+    ~LineEditor() override;
+    LineEditor();
     int getSize() const;
     int getWorkingLine() const;
     bool isEditing();
+    void readFromFile(std::string file_name);
+    void writeToFile(std::string file_name);
     static bool isValidOperation(const std::string& input);
     void initOperations(const std::string& input);
-    void initContents(std::stringstream stream_contents);
     void execute(const std::string& input);
     void printLine(int line_num);
 };

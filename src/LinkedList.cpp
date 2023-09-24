@@ -3,7 +3,6 @@
 //
 
 #include "../inc/LinkedList.h"
-#include <iostream>
 
 LinkedList::LinkedList() {
     size = 0;
@@ -104,19 +103,6 @@ void LinkedList::deleteNode(int position) {
     size--;
 }
 
-std::ostream &operator<<(std::ostream &output, const LinkedList& linked_list) {
-    auto line = linked_list.head;
-
-    //output each line of the document
-    //TODO check if this is right?
-    while (line != nullptr) {
-        std::cout << line->position << "> " << line->data << std::endl;
-        line = line->next;
-    }
-
-    return output;
-}
-
 void LinkedList::updateNodePositions() {
     Node * line = head;
     Node * prev = nullptr;
@@ -133,12 +119,12 @@ void LinkedList::updateNodePositions() {
 }
 
 std::string LinkedList::getNodeData(int position) {
+    if (position <= 0 || position > size) return "";
+
     Node * curr = head;
 
     //get to the desired line to print
     while (curr != nullptr && curr->position != position) curr = curr->next;
-
-    if (curr == nullptr) return "";
 
     return curr->data;
 }

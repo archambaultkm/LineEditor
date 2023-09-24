@@ -4,6 +4,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+    LineEditor line_editor;
     string user_input, file_name;
 
     //load/create the file given as command line argument
@@ -11,10 +12,9 @@ int main(int argc, char *argv[]) {
         file_name = argv[2];
     }
 
-    LineEditor line_editor(file_name);
+    line_editor.readFromFile(file_name);
 
-    //TODO this should probably be in the init function
-    //show them the document they're working with at the start of the program
+    //print the loaded document at the start of the program
     for (int i=1; i<=line_editor.getSize(); i++)
         line_editor.printLine(i);
 
@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
 
     } while (line_editor.isEditing());
 
+    line_editor.writeToFile(file_name);
     std::cout << "Contents saved to " << file_name << endl;
     cout << "Exiting application..." << endl;
 
