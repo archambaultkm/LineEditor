@@ -18,22 +18,12 @@ void LinkedList::insertNode(int line_num, std::string data) {
     Node * temp = new Node();
     temp->data = std::move(data);
 
-    //If the data is being inserted at the end of the linked list
-    if (line_num == size + 1) {
+    //If this is the first node being inserted
+    if (size == 0) {
         temp->position = line_num;
         temp->next = nullptr;
+        head = temp;
 
-        if (size == 0) {
-            //If this is the first node being inserted it is both head and tail
-            head = temp;
-            tail = temp;
-        } else {
-            //link the current tail to the new last node, link from the head if this is the second node, update the tail.
-            tail->next = temp;
-            if (size == 1) head->next = temp;
-            tail = temp;
-        }
-    //inserting data in the beginning or middle of linked list
     } else {
         //insert the new node at the position specified
         temp->position = line_num;
@@ -45,6 +35,7 @@ void LinkedList::insertNode(int line_num, std::string data) {
             head = temp;
             temp->next = curr;
         } else {
+
             while ( curr != nullptr && curr->position != line_num) {
                 prev = curr;
                 curr = curr->next;
@@ -54,7 +45,7 @@ void LinkedList::insertNode(int line_num, std::string data) {
             temp->next = curr;
         }
     }
-    //update size and node positions to reflect the addition
+    //update list size and node positions to reflect the addition
     size++;
     updateNodePositions();
 }
@@ -84,12 +75,6 @@ void LinkedList::deleteNode(int position) {
     if (position == 1) {
         temp = head;
         head = head->next;
-        delete temp;
-
-    } else if (position == size) {
-        temp = curr;
-        tail = prev;
-        tail->next = nullptr;
         delete temp;
 
     //any lines in the middle of the document
@@ -123,7 +108,7 @@ std::string LinkedList::getNodeData(int position) {
 
     Node * curr = head;
 
-    //get to the desired line to print
+    //get to the desired line
     while (curr != nullptr && curr->position != position) curr = curr->next;
 
     return curr->data;

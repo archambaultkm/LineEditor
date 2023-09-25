@@ -16,7 +16,6 @@ public:
     void editNode(int position, std::string data);
     void deleteNode(int position);
     void updateNodePositions();
-    friend std::ostream& operator<<(std::ostream& output, const LinkedList& document);
 private:
     struct Node {
         int position;

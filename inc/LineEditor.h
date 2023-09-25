@@ -11,7 +11,7 @@
 class LineEditor : LinkedList {
 private:
     enum Operation {
-        Operation_Invalid,
+        Not_An_Operation,
         Insert,
         Revise,
         Delete,
@@ -21,7 +21,6 @@ private:
     static Operation resolveOperations(const std::string& input);
     Operation operation;
     std::string user_input;
-    std::string file_name;
     std::ifstream ifs;
     std::ofstream ofs;
     int range_start;
@@ -34,8 +33,8 @@ public:
     int getSize() const;
     int getWorkingLine() const;
     bool isEditing();
-    void readFromFile(std::string file_name);
-    void writeToFile(std::string file_name);
+    void readFromFile(const std::string& file_name);
+    void writeToFile(const std::string& file_name);
     static bool isValidOperation(const std::string& input);
     void initOperations(const std::string& input);
     void execute(const std::string& input);

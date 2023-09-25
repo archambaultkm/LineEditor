@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
 
     } while (line_editor.isEditing());
 
-    //when they're done, save the file.
+    //when done, save the file.
     line_editor.writeToFile(file_name);
     std::cout << "Contents saved to " << file_name << endl;
     cout << "Exiting application..." << endl;

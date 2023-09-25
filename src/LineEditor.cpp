@@ -40,11 +40,12 @@ LineEditor::Operation LineEditor::resolveOperations(const std::string& input) {
     if (input == "L") return List;
     if (input == "E") return Exit;
 
-    return Operation_Invalid;
+    return Not_An_Operation;
 }
 
 bool LineEditor::isValidOperation(const std::string& input) {
     std::regex valid_operation(R"(^(I|R|D|L|E)([[:space:]](-)?[0-9]+)?([[:space:]](-)?[0-9]+)?$)");
+
     return (regex_match(input, valid_operation));
 }
 
@@ -53,19 +54,42 @@ void LineEditor::initOperations(const std::string& input) {
     std::vector<std::string> args;
     std::string arg;
 
+    //use a stream and vector for easy parsing
     std::istringstream input_stream(input);
-    //send stream content to vector for easy parsing
     while (input_stream >> arg) args.push_back(arg);
 
     operation = resolveOperations(args.at(0));
+    //this moves the cursor up a line if the user gives no range argument for insert, edit, or delete
+    if (working_line != 1) range_start = working_line - 1;
+
+    //List has a special case for no number arguments
+    if (args.size() == 1 && operation == List) {
+        range_start = 1;
+        range_end = size;
+        if (range_end == 0) range_end = 1;
+
+        return;
+    }
+
+    //reassign range numbers if values were provided
     if (args.size() >= 2) {
-        range_start = stoi(args.at(1));
+        try {
+            range_start = stoi(args.at(1));
+        } catch(std::out_of_range& e) { return; }
 
         //if 0 is given explicitly as an argument, stop setting values so that the operation fails (nothing happens)
         if (range_start == 0) return;
     }
-    if (args.size() == 3)
+
+    if (args.size() == 3) {
+        try {
         range_end = stoi(args.at(2));
+        } catch(std::out_of_range& e) { return; }
+
+    } else {
+        //for looping purposes, range end=start unless user provided a value
+        range_end = range_start;
+    }
 
     //make sure the range is positive
     if (range_start > range_end && range_end != 0) {
@@ -73,50 +97,35 @@ void LineEditor::initOperations(const std::string& input) {
         range_end = range_start;
         range_start = temp;
     }
-
-    //case for when no number arguments were given, only an operation
-    if (range_start == 0) {
-        if (operation == List) {
-            range_start = 1;
-            range_end = size;
-            if (range_end == 0) range_end = 1;
-            return;
-        }
-        //this moves the cursor up a line if the user gives no range argument for insert, edit, delete
-        if (working_line != 1) range_start = working_line - 1;
-    }
-    //if no second number argument is given, make the end == the start for looping
-    if (range_end == 0) {
-        range_end = range_start;
-    }
 }
 
 void LineEditor::execute(const std::string& input) {
     if (!isValidOperation(input)) {
         user_input = input;
-        operation = Operation_Invalid;
+        operation = Not_An_Operation;
     } else initOperations(input);
 
     switch (operation) {
-        case Exit:
-
-            break;
-        //TODO the name of this is a bit confusing
-        case Operation_Invalid:
+        case Not_An_Operation:
             //If they haven't entered a valid operation, assume they're trying to insert text on the displayed line
             this->insertNode(working_line, user_input);
             working_line++;
 
             break;
 
+        case Exit:
+
+            break;
+
         case Insert:
-            //"Insert" just moves the line, check for valid position first
-            if (range_start <= 0 || range_start > size) break;
+            if (range_start <= 0 ||  range_end > size) return;
+            //"Insert" just moves the line
             working_line = range_start;
 
             break;
 
         case Revise:
+            if (range_start <= 0 ||  range_end > size) return;
             //I think decoupling io for this is more work than it's worth
             std::cout << range_start << "> ";
             getline(std::cin, user_input);
@@ -126,34 +135,37 @@ void LineEditor::execute(const std::string& input) {
             break;
 
         case Delete:
-            if (range_start <= 0 || range_start > size) break;
+            if (range_start <= 0 ||  range_end > size) return;
             for (int i=range_start; i<=range_end; i++) this->deleteNode(range_start);
 
             //adjust working line if a line before it was deleted
             if (working_line >= range_end) {
                 if (range_end - range_start != 0)
                     working_line = working_line - (range_end - range_start);
+
                 working_line--;
 
+                //don't allow the working line to go below the first line of the document
                 if (working_line < 1) working_line = 1;
             }
 
             break;
 
         case List:
+            if (range_start <= 0 ||  range_end > size) return;
             for (int i=range_start; i<=range_end; i++) {
                 //don't allow printing of lines outside document bounds
                 if (i <= 0 || i > size) break;
                 this->printLine(i);
             }
 
-            working_line = range_end+1;
+            if (range_end > 1 && range_end < size) working_line = range_end + 1;
 
             break;
     }//end switch operations
 }
 
-void LineEditor::readFromFile(std::string file_name) {
+void LineEditor::readFromFile(const std::string& file_name) {
     std::string file_line;
 
     try {
@@ -178,7 +190,7 @@ void LineEditor::readFromFile(std::string file_name) {
     ifs.close();
 }
 
-void LineEditor::writeToFile(std::string file_name) {
+void LineEditor::writeToFile(const std::string& file_name) {
     std::string file_line;
 
     try {
