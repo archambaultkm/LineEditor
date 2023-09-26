@@ -10,12 +10,14 @@
 #include <iostream>
 #include <regex>
 #include "../inc/line_editor.h"
+#include "../inc/file_manager.h"
 
 using namespace std;
 
 bool isValidFilePath(const string& provided_file_path);
 
 int main(int argc, char *argv[]) {
+    FileManager file_manager;
     LineEditor line_editor;
     string user_input, file_name;
 
@@ -30,9 +32,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // load/create the file given as command line argument
+    //read file into line editor
     file_name = argv[2];
-    line_editor.readFromFile(file_name);
+    file_manager.readStreamFromFile(file_name) >> line_editor;
 
     cout << line_editor;
 
@@ -44,8 +46,10 @@ int main(int argc, char *argv[]) {
 
     } while (line_editor.isEditing());
 
-    // when done, save the file.
-    line_editor.writeToFile(file_name);
+    std::stringstream editor_contents;
+    editor_contents << line_editor;
+    file_manager.writeStreamToFile(file_name, std::move(editor_contents));
+
     std::cout << "Contents saved to " << file_name << endl;
     cout << "Exiting application..." << endl;
 
@@ -58,7 +62,7 @@ int main(int argc, char *argv[]) {
  * @param provided_file_path file path input by user
  *
  * @returns bool
- * @note Expected file path format is "(/path/)file_name.txt"
+ * @note Expected file path format is "(/path/)m_file_name.txt"
  */
 bool isValidFilePath(const string& provided_file_path) {
     regex valid_file_path(R"(^(..)?\/?([a-zA-Z0-9_-]+[\/])?([a-zA-Z0-9_-])+\.txt$)");

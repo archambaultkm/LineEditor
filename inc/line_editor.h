@@ -28,9 +28,9 @@ public:
     int getWorkingLine() const;
     bool isEditing();
     void execute(const std::string& input);
-    void readFromFile(const std::string& file_name);
-    void writeToFile(const std::string& file_name);
     friend std::ostream& operator<<(std::ostream& output, LineEditor& line_editor);
+    friend std::stringstream& operator<<(std::stringstream& output, LineEditor& line_editor);
+    friend std::istream &operator>>(std::istream& input, LineEditor& line_editor);
 
 private:
     enum Operation {

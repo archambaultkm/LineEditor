@@ -95,68 +95,6 @@ void LineEditor::execute(const std::string& input) {
 }
 
 /**
- * Use fstream to read in file and insert into line editor line
- * by line.
- *
- * @param file_name already-validated input file path
- * @note also adjusts working line for the editor to end
- * of file.
- */
-void LineEditor::readFromFile(const std::string& file_name) {
-    std::string file_line;
-
-    try {
-        m_ifs.open(file_name, std::fstream::in);
-
-        if (m_ifs.fail()) {
-            std::cout << "Could not find " << file_name << ", creating new document." << std::endl;
-        }
-
-        // take each line from file (even if empty) and insert into line editor
-        int line_num = 1;
-        while (getline(m_ifs, file_line)) {
-            this->insertNode(line_num, file_line);
-            line_num ++;
-        }
-
-    }  catch (std::ifstream::failure &e) {
-        std::cout << "Exception opening/closing/reading file" << std::endl;
-    }
-
-    m_working_line = m_size + 1;
-    m_ifs.close();
-}
-
-/**
- * Use fstream to write the contents of the Line Editor to
- * file line by line
- *
- * @param file_name already-validated input file path
- */
-void LineEditor::writeToFile(const std::string& file_name) {
-    std::string file_line;
-
-    try {
-        // trunc: completely overwrite the old file
-        m_ofs.open(file_name, std::fstream::trunc );
-
-        if (m_ofs.fail()) {
-            std::cout << "Could not open file.";
-        }
-
-        for (int i=1; i <= m_size; i++) {
-            file_line = this->getNodeData(i);
-            m_ofs << file_line << std::endl;
-        }
-
-    }  catch (std::ofstream::failure &e) {
-        std::cout << "Exception opening/closing/reading file" << std::endl;
-    }
-
-    m_ofs.close();
-}
-
-/**
  * \<\< operator prints entire contents of a line editor
  *
  */
@@ -165,11 +103,42 @@ std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
 
     //output each line of the document
     while (line_num <= line_editor.m_size) {
-        std::cout << line_num << "> " << line_editor.getNodeData(line_num) << std::endl;
+        output << line_num << "> " << line_editor.getNodeData(line_num) << std::endl;
         line_num++;
     }
 
     return output;
+}
+
+/**
+ * \<\< operator returns contents of line editor without line number prompts
+ *
+ * @note Used when the output will be saved to a file (doesn't include line number prompts)
+ */
+std::stringstream &operator<<(std::stringstream &output, LineEditor& line_editor) {
+    int line_num = 1;
+
+    //output each line of the document
+    while (line_num <= line_editor.m_size) {
+        output << line_editor.getNodeData(line_num) << std::endl;
+        line_num++;
+    }
+
+    return output;
+}
+
+std::istream &operator>>(std::istream& input, LineEditor& line_editor) {
+    std::string stream_line;
+    int line_num = 1;
+
+    while (getline(input, stream_line)) {
+        line_editor.insertNode(line_num, stream_line);
+        line_num ++;
+    }
+
+    line_editor.m_size = line_num - 1;
+    line_editor.m_working_line = line_editor.m_size + 1;
+    return input;
 }
 
 /**
