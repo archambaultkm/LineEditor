@@ -18,7 +18,7 @@ LinkedList<T>::~LinkedList() = default;
  * Inserts a new Node in Linked List
  *
  * @param line_num line to insert new node at
- * @param data text for the new node to hold
+ * @param data data for the new node to hold
  * @note also increases List m_size property and calls function to update other node positions
  */
 template <class T>
@@ -64,7 +64,7 @@ void LinkedList<T>::insertNode(int line_num, T data) {
 /**
  * Edits an existing Node in Linked List
  *
- * @param line_num m_position of node to edit
+ * @param line_num position of node to edit
  * @param data text to replace the existing Node m_data
  */
 template <class T>
@@ -79,7 +79,7 @@ void LinkedList<T>::editNode(int line_num, T data) {
 /**
  * Deletes an existing Node in Linked List
  *
- * @param line_num m_position of node to delete
+ * @param line_num position of node to delete
  * @note also decreases List m_size property and calls function to update other node positions
  */
 template <class T>
@@ -135,8 +135,8 @@ void LinkedList<T>::updateNodePositions() {
 /**
  * Use to access the m_data stored in a specific Node
  *
- * @param line_num m_position in list of node to delete
- * @returns Node m_data property (string)
+ * @param line_num position in list of node to delete
+ * @returns Node m_data property
  */
 template <class T>
 T LinkedList<T>::getNodeData(int line_num) {

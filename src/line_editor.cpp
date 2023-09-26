@@ -26,7 +26,7 @@ bool LineEditor::isEditing() {
 }
 
 /**
- * << operator prints entire contents of a line editor
+ * \<\< operator prints entire contents of a line editor
  *
  */
 std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
@@ -42,9 +42,11 @@ std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
 }
 
 /**
- * Match input string to an available m_operation
+ * Match input string to an available operation
  *
- * @param input provided letter
+ * @param input Provided letter split from input arguments
+ *
+ * @returns Operation to be performed by the LineEditor
  */
 LineEditor::Operation LineEditor::resolveOperations(const std::string& input) {
     if (input == "I") return Insert;
@@ -57,10 +59,10 @@ LineEditor::Operation LineEditor::resolveOperations(const std::string& input) {
 }
 
 /**
- * Check if user input can be parsed to a valid m_operation for the line editor to use
+ * Check if user input can be parsed to a valid operation for the line editor to use
  *
  * @param input entire line input by the user
- * @note the expected formats for an m_operation are "A", "A int1", or "A int1 int2"
+ * @note the expected formats for an operation are "A", "A int1", or "A int1 int2"
  * @returns bool- input line matches regex expression
  */
 bool LineEditor::isValidOperation(const std::string& input) {
@@ -70,7 +72,7 @@ bool LineEditor::isValidOperation(const std::string& input) {
 }
 
 /**
- * If the input was successfully validated as an m_operation, initialize the
+ * If the input was successfully validated as an operation, initialize the
  * Line Editor's m_operation, m_iter_start, and m_iter_end properties
  *
  * @param input entire line input by the user
@@ -86,7 +88,7 @@ void LineEditor::initOperations(const std::string& input) {
     while (input_stream >> arg) args.push_back(arg);
 
     m_operation = resolveOperations(args.at(0));
-    // this moves the cursor up a line if the user gives no range argument for insert, edit, or delete
+    // this moves the "cursor" up a line if the user gives no range argument for insert, edit, or delete
     if (m_working_line != 1) m_iter_start = m_working_line - 1;
 
     // List has a special case for no number arguments
@@ -176,16 +178,7 @@ void LineEditor::execute(const std::string& input) {
             if (m_iter_start <= 0 || m_iter_end > m_size) return;
             for (int i=m_iter_start; i <= m_iter_end; i++) this->deleteNode(m_iter_start);
 
-            // adjust working line if a line before it was deleted
-            if (m_working_line >= m_iter_end) {
-                if (m_iter_end - m_iter_start != 0)
-                    m_working_line = m_working_line - (m_iter_end - m_iter_start);
-
-                m_working_line--;
-
-                //don't allow the working line to go below the first line of the document
-                if (m_working_line < 1) m_working_line = 1;
-            }
+            if (m_working_line >= m_size + 1) m_working_line = m_size + 1;
 
             break;
 
@@ -200,7 +193,7 @@ void LineEditor::execute(const std::string& input) {
             if (m_iter_end > 1 && m_iter_end <= m_size) m_working_line = m_iter_end + 1;
 
             break;
-    } //end switch operations
+    }
 }
 
 /**

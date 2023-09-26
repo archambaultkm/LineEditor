@@ -11,10 +11,14 @@
 #include <string>
 
 /**
- * Extends Linked List class to implement file i/o and parse operations to perform on list
+ * @brief LineEditor class adds functionality to LinkedList class for parsing user input and file i/o.
  *
- * Paragraph description
+ * This class handles the validation of user input, working line logic, and the control flow of operations.
+ * The LineEditor class also has its own functions for file i/o so that data can move directly between
+ * files and the LinkedList.
  *
+ * @note m_iter_start and m_iter_end properties are used to determine how many times an operation should be performed.
+ * @note m_working_line is used to show the user what line their cursor is currently on
  */
 class LineEditor : LinkedList<std::string> {
 public:

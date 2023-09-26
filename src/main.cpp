@@ -1,21 +1,18 @@
+/**
+ * @brief Program to open, edit and save a text file
+ * using Linked List data structure
+ *
+ * @author Kaitlyn Archambault
+ * @date Sept. 26, 2023
+ */
+
 #include <iostream>
 #include <regex>
 #include "../inc/line_editor.h"
 
 using namespace std;
 
-/**
- * Expected file path format is "(/path/)file_name.txt"
- *
- * @param provided_file_path file path input by user
- *
- * @returns bool
- */
-bool isValidFilePath(const string& provided_file_path) {
-    regex valid_file_path(R"(^(..)?\/?([a-zA-Z0-9_-]+[\/])?([a-zA-Z0-9_-])+\.txt$)");
-
-    return regex_match(provided_file_path, valid_file_path);
-}
+bool isValidFilePath(const string& provided_file_path);
 
 int main(int argc, char *argv[]) {
     LineEditor line_editor;
@@ -52,4 +49,18 @@ int main(int argc, char *argv[]) {
     cout << "Exiting application..." << endl;
 
     return 0;
+}
+
+/**
+ * Validate provided file path with regex
+ *
+ * @param provided_file_path file path input by user
+ *
+ * @returns bool
+ * @note Expected file path format is "(/path/)file_name.txt"
+ */
+bool isValidFilePath(const string& provided_file_path) {
+    regex valid_file_path(R"(^(..)?\/?([a-zA-Z0-9_-]+[\/])?([a-zA-Z0-9_-])+\.txt$)");
+
+    return regex_match(provided_file_path, valid_file_path);
 }

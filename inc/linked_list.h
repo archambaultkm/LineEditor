@@ -6,7 +6,7 @@
 #define ASSIGNMENT1_LINKED_LIST_H
 
 /**
- * Simple Linked List class
+ * @brief Simple Linked List class template
  *
  * Includes protected functions to insert, edit, and delete nodes
  * at a provided position in the list. As this is a class template,
