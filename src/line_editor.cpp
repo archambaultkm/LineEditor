@@ -1,6 +1,7 @@
-//
-// Created by Kaitlyn Archambault on 2023-09-16.
-//
+/**
+ * @author Kaitlyn Archambault
+ * @date Sept. 26, 2023
+ */
 
 #include <iostream>
 #include <sstream>
@@ -23,6 +24,136 @@ int LineEditor::getWorkingLine() const {
 
 bool LineEditor::isEditing() {
     return m_operation != Exit;
+}
+
+/**
+ * Invokes private functions to validate the given input and
+ * determine what m_operation to execute. Any cases that change the
+ * m_size property of the line editor (Insert or Delete) will also
+ * manage updating the current working line.
+ *
+ * @param input entire line input by the user
+ * @note this is meant to take responsibility for control flow and
+ * validation away from the main program so that the class is reusable
+ * anywhere
+ */
+void LineEditor::execute(const std::string& input) {
+    if (!isValidOperation(input)) {
+        m_user_input = input;
+        m_operation = Not_An_Operation;
+    } else initOperations(input);
+
+    switch (m_operation) {
+        case Not_An_Operation:
+            // If they haven't entered a valid m_operation, assume they're trying to insert text on the displayed line
+            this->insertNode(m_working_line, m_user_input);
+            m_working_line++;
+
+            break;
+
+        case Exit:
+
+            break;
+
+        case Insert:
+            if (m_iter_start <= 0 || m_iter_end > m_size) return;
+            // "Insert" just moves the line
+            m_working_line = m_iter_start;
+
+            break;
+
+        case Revise:
+            if (m_iter_start <= 0 || m_iter_end > m_size) return;
+
+            std::cout << m_iter_start << "> ";
+            getline(std::cin, m_user_input);
+
+            this->editNode(m_iter_start, m_user_input);
+
+            break;
+
+        case Delete:
+            if (m_iter_start <= 0 || m_iter_end > m_size) return;
+            for (int i=m_iter_start; i <= m_iter_end; i++) this->deleteNode(m_iter_start);
+
+            if (m_working_line > m_size) m_working_line = m_size + 1;
+
+            break;
+
+        case List:
+            if (m_iter_start <= 0 || m_iter_end > m_size) return;
+            for (int i=m_iter_start; i <= m_iter_end; i++) {
+                // don't allow printing of lines outside document bounds
+                if (i <= 0 || i > m_size) break;
+                std::cout << i << "> " << this->getNodeData(i) << std::endl;
+            }
+
+            if (m_iter_end >= 1 && m_iter_end <= m_size) m_working_line = m_iter_end + 1;
+
+            break;
+    }
+}
+
+/**
+ * Use fstream to read in file and insert into line editor line
+ * by line.
+ *
+ * @param file_name already-validated input file path
+ * @note also adjusts working line for the editor to end
+ * of file.
+ */
+void LineEditor::readFromFile(const std::string& file_name) {
+    std::string file_line;
+
+    try {
+        m_ifs.open(file_name, std::fstream::in);
+
+        if (m_ifs.fail()) {
+            std::cout << "Could not find " << file_name << ", creating new document." << std::endl;
+        }
+
+        // take each line from file (even if empty) and insert into line editor
+        int line_num = 1;
+        while (getline(m_ifs, file_line)) {
+            this->insertNode(line_num, file_line);
+            line_num ++;
+        }
+
+    }  catch (std::ifstream::failure &e) {
+        std::cout << "Exception opening/closing/reading file" << std::endl;
+    }
+
+    m_working_line = m_size + 1;
+    m_ifs.close();
+}
+
+/**
+ * Use fstream to write the contents of the Line Editor to
+ * file line by line
+ *
+ * @param file_name already-validated input file path
+ */
+void LineEditor::writeToFile(const std::string& file_name) {
+    std::string file_line;
+
+    try {
+        // trunc: completely overwrite the old file
+        m_ofs.open(file_name, std::fstream::trunc );
+
+        if (m_ofs.fail()) {
+            std::cout << "Could not open file.";
+        }
+
+        for (int i=1; i <= m_size; i++) {
+            file_line = this->getNodeData(i);
+            m_ofs << file_line << std::endl;
+        }
+
+    }  catch (std::ofstream::failure &e) {
+        std::cout << "Exception opening/closing/reading file" << std::endl;
+    }
+
+    m_ofs.close();
 }
 
 /**
@@ -126,134 +257,4 @@ void LineEditor::initOperations(const std::string& input) {
         m_iter_end = m_iter_start;
         m_iter_start = temp;
     }
-}
-
-/**
- * Invokes private functions to validate the given input and
- * determine what m_operation to execute. Any cases that change the
- * m_size property of the line editor (Insert or Delete) will also
- * manage updating the current working line.
- *
- * @param input entire line input by the user
- * @note this is meant to take responsibility for control flow and
- * validation away from the main program so that the class is reusable
- * anywhere
- */
-void LineEditor::execute(const std::string& input) {
-    if (!isValidOperation(input)) {
-        m_user_input = input;
-        m_operation = Not_An_Operation;
-    } else initOperations(input);
-
-    switch (m_operation) {
-        case Not_An_Operation:
-            // If they haven't entered a valid m_operation, assume they're trying to insert text on the displayed line
-            this->insertNode(m_working_line, m_user_input);
-            m_working_line++;
-
-            break;
-
-        case Exit:
-
-            break;
-
-        case Insert:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-            // "Insert" just moves the line
-            m_working_line = m_iter_start;
-
-            break;
-
-        case Revise:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-
-            std::cout << m_iter_start << "> ";
-            getline(std::cin, m_user_input);
-
-            this->editNode(m_iter_start, m_user_input);
-
-            break;
-
-        case Delete:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-            for (int i=m_iter_start; i <= m_iter_end; i++) this->deleteNode(m_iter_start);
-
-            if (m_working_line >= m_size + 1) m_working_line = m_size + 1;
-
-            break;
-
-        case List:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-            for (int i=m_iter_start; i <= m_iter_end; i++) {
-                // don't allow printing of lines outside document bounds
-                if (i <= 0 || i > m_size) break;
-                std::cout << i << "> " << this->getNodeData(i) << std::endl;
-            }
-
-            if (m_iter_end > 1 && m_iter_end <= m_size) m_working_line = m_iter_end + 1;
-
-            break;
-    }
-}
-
-/**
- * Use fstream to read in file and insert into line editor line
- * by line.
- *
- * @param file_name already-validated input file path
- * @note also adjusts working line for the editor to end
- * of file.
- */
-void LineEditor::readFromFile(const std::string& file_name) {
-    std::string file_line;
-
-    try {
-        m_ifs.open(file_name, std::fstream::in);
-
-        if (m_ifs.fail()) {
-            std::cout << "Could not find " << file_name << ", creating new document." << std::endl;
-        }
-
-        // take each line from file (even if empty) and insert into line editor
-        int line_num = 1;
-        while (getline(m_ifs, file_line)) {
-            this->insertNode(line_num, file_line);
-            line_num ++;
-        }
-
-    }  catch (std::ifstream::failure &e) {
-        std::cout << "Exception opening/closing/reading file" << std::endl;
-    }
-
-    m_working_line = m_size + 1;
-    m_ifs.close();
-}
-
-/**
- * Use fstream to write the contents of the Line Editor to
- * file line by line
- *
- * @param file_name already-validated input file path
- */
-void LineEditor::writeToFile(const std::string& file_name) {
-    std::string file_line;
-
-    try {
-        // trunc: completely overwrite the old file
-        m_ofs.open(file_name, std::fstream::trunc );
-
-        if (m_ofs.fail()) {
-            std::cout << "Could not open file.";
-        }
-
-        for (int i=1; i <= m_size; i++) {
-            file_line = this->getNodeData(i);
-            m_ofs << file_line << std::endl;
-        }
-
-    }  catch (std::ofstream::failure &e) {
-        std::cout << "Exception opening/closing/reading file" << std::endl;
-    }
-
-    m_ofs.close();
 }

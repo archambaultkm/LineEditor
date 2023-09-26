@@ -1,6 +1,7 @@
-//
-// Created by Kaitlyn Archambault on 2023-09-16.
-//
+/**
+ * @author Kaitlyn Archambault
+ * @date Sept. 26, 2023
+ */
 
 #ifndef ASSIGNMENT1_LINE_EDITOR_H
 #define ASSIGNMENT1_LINE_EDITOR_H

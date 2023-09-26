@@ -1,6 +1,7 @@
-//
-// Created by Kaitlyn Archambault on 2023-09-22.
-//
+/**
+ * @author Kaitlyn Archambault
+ * @date Sept. 26, 2023
+ */
 
 #include "../inc/linked_list.h"
 #include <string>
@@ -13,6 +14,24 @@ LinkedList<T>::LinkedList() {
 
 template <class T>
 LinkedList<T>::~LinkedList() = default;
+
+/**
+ * Use to access the m_data stored in a specific Node
+ *
+ * @param line_num position in list of node to delete
+ * @returns Node m_data property
+ */
+template <class T>
+T LinkedList<T>::getNodeData(int line_num) {
+    if (line_num <= 0 || line_num > m_size) return "";
+
+    Node * curr = m_head;
+
+    // get to the desired line
+    while (curr != nullptr && curr->m_position != line_num) curr = curr->m_next;
+
+    return curr->m_data;
+}
 
 /**
  * Inserts a new Node in Linked List
@@ -130,22 +149,4 @@ void LinkedList<T>::updateNodePositions() {
         prev = line;
         line = line->m_next;
     }
-}
-
-/**
- * Use to access the m_data stored in a specific Node
- *
- * @param line_num position in list of node to delete
- * @returns Node m_data property
- */
-template <class T>
-T LinkedList<T>::getNodeData(int line_num) {
-    if (line_num <= 0 || line_num > m_size) return "";
-
-    Node * curr = m_head;
-
-    // get to the desired line
-    while (curr != nullptr && curr->m_position != line_num) curr = curr->m_next;
-
-    return curr->m_data;
 }

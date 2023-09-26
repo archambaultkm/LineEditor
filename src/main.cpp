@@ -1,9 +1,10 @@
 /**
+ * @author Kaitlyn Archambault
+ * @date Sept. 26, 2023
+ *
  * @brief Program to open, edit and save a text file
  * using Linked List data structure
  *
- * @author Kaitlyn Archambault
- * @date Sept. 26, 2023
  */
 
 #include <iostream>
