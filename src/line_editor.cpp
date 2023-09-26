@@ -28,7 +28,7 @@ bool LineEditor::isEditing() {
 
 /**
  * Invokes private functions to validate the given input and
- * determine what m_operation to execute. Any cases that change the
+ * determine what operation to execute. Any cases that change the
  * m_size property of the line editor (Insert or Delete) will also
  * manage updating the current working line.
  *
@@ -182,7 +182,7 @@ void LineEditor::initOperations(const std::string& input) {
 }
 
 /**
- * \<\< operator prints entire contents of a line editor
+ * \<\< operator returns entire contents of a line editor
  *
  */
 std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
@@ -200,7 +200,7 @@ std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
 /**
  * \<\< operator returns contents of line editor without line number prompts
  *
- * @note Used when the output will be saved to a file (doesn't include line number prompts)
+ * @note Used when the output will be saved to a file
  */
 std::stringstream &operator<<(std::stringstream &output, LineEditor& line_editor) {
     int line_num = 1;

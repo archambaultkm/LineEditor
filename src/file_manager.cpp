@@ -1,6 +1,7 @@
-//
-// Created by Kaitlyn Archambault on 2023-09-21.
-//
+/**
+ * @author Kaitlyn Archambault
+ * @date Sept. 26, 2023
+ */
 #include "../inc/file_manager.h"
 #include <iostream>
 #include <utility>
