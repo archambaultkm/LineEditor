@@ -12,11 +12,10 @@
 #include <string>
 
 /**
- * @brief LineEditor class adds functionality to LinkedList class for parsing user input and file i/o.
+ * @brief LineEditor class adds functionality to LinkedList class for parsing user input and i/o streams
  *
  * This class handles the validation of user input, working line logic, and the control flow of operations.
- * The LineEditor class also has its own functions for file i/o so that data can move directly between
- * files and the LinkedList.
+ * It is also possible for editor contents to be written to or read from a stream
  *
  * @note m_iter_start and m_iter_end properties are used to determine how many times an operation should be performed.
  * @note m_working_line is used to show the user what line their cursor is currently on
