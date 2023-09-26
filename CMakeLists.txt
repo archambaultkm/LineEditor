@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(assignment1
         src/main.cpp
-        src/LineEditor.cpp
-        inc/LineEditor.h
-        src/LinkedList.cpp
-        inc/LinkedList.h
+        src/line_editor.cpp
+        inc/line_editor.h
+        src/linked_list.cpp
+        inc/linked_list.h
 )
