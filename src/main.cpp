@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
     file_name = argv[2];
     file_manager.readStreamFromFile(file_name) >> line_editor;
 
+    //display contents of file once they're read
     cout << line_editor;
 
     do {
@@ -46,6 +47,7 @@ int main(int argc, char *argv[]) {
 
     } while (line_editor.isEditing());
 
+    //when the editor is exited, read the line editor to a stream and save contents to file
     std::stringstream editor_contents;
     editor_contents << line_editor;
     file_manager.writeStreamToFile(file_name, std::move(editor_contents));

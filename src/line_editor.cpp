@@ -95,53 +95,6 @@ void LineEditor::execute(const std::string& input) {
 }
 
 /**
- * \<\< operator prints entire contents of a line editor
- *
- */
-std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
-    int line_num = 1;
-
-    //output each line of the document
-    while (line_num <= line_editor.m_size) {
-        output << line_num << "> " << line_editor.getNodeData(line_num) << std::endl;
-        line_num++;
-    }
-
-    return output;
-}
-
-/**
- * \<\< operator returns contents of line editor without line number prompts
- *
- * @note Used when the output will be saved to a file (doesn't include line number prompts)
- */
-std::stringstream &operator<<(std::stringstream &output, LineEditor& line_editor) {
-    int line_num = 1;
-
-    //output each line of the document
-    while (line_num <= line_editor.m_size) {
-        output << line_editor.getNodeData(line_num) << std::endl;
-        line_num++;
-    }
-
-    return output;
-}
-
-std::istream &operator>>(std::istream& input, LineEditor& line_editor) {
-    std::string stream_line;
-    int line_num = 1;
-
-    while (getline(input, stream_line)) {
-        line_editor.insertNode(line_num, stream_line);
-        line_num ++;
-    }
-
-    line_editor.m_size = line_num - 1;
-    line_editor.m_working_line = line_editor.m_size + 1;
-    return input;
-}
-
-/**
  * Match input string to an available operation
  *
  * @param input Provided letter split from input arguments
@@ -226,4 +179,55 @@ void LineEditor::initOperations(const std::string& input) {
         m_iter_end = m_iter_start;
         m_iter_start = temp;
     }
+}
+
+/**
+ * \<\< operator prints entire contents of a line editor
+ *
+ */
+std::ostream &operator<<(std::ostream &output, LineEditor& line_editor) {
+    int line_num = 1;
+
+    //output each line of the document
+    while (line_num <= line_editor.m_size) {
+        output << line_num << "> " << line_editor.getNodeData(line_num) << std::endl;
+        line_num++;
+    }
+
+    return output;
+}
+
+/**
+ * \<\< operator returns contents of line editor without line number prompts
+ *
+ * @note Used when the output will be saved to a file (doesn't include line number prompts)
+ */
+std::stringstream &operator<<(std::stringstream &output, LineEditor& line_editor) {
+    int line_num = 1;
+
+    //output each line of the document
+    while (line_num <= line_editor.m_size) {
+        output << line_editor.getNodeData(line_num) << std::endl;
+        line_num++;
+    }
+
+    return output;
+}
+
+/**
+ * \>\> operator reads contents of provided stream into line editor
+ *
+ */
+std::istream &operator>>(std::istream& input, LineEditor& line_editor) {
+    std::string stream_line;
+    int line_num = 1;
+
+    while (getline(input, stream_line)) {
+        line_editor.insertNode(line_num, stream_line);
+        line_num ++;
+    }
+
+    line_editor.m_size = line_num - 1;
+    line_editor.m_working_line = line_editor.m_size + 1;
+    return input;
 }

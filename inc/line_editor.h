@@ -46,8 +46,6 @@ private:
     int m_iter_start;
     int m_iter_end;
     int m_working_line;
-    std::ifstream m_ifs;
-    std::ofstream m_ofs;
     static Operation resolveOperations(const std::string& input);
     static bool isValidOperation(const std::string& input);
     void initOperations(const std::string& input);
