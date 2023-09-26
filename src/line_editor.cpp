@@ -114,7 +114,7 @@ void LineEditor::initOperations(const std::string& input) {
         } catch(std::out_of_range& e) { return; }
 
     } else {
-        // for looping purposes, iter end=start unless user provided a value
+        // for looping purposes, iter_end=start unless user provided a value
         m_iter_end = m_iter_start;
     }
 

@@ -32,9 +32,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    file_name = argv[2];
-
     // load/create the file given as command line argument
+    file_name = argv[2];
     line_editor.readFromFile(file_name);
 
     cout << line_editor;

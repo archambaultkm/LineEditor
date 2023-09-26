@@ -5,8 +5,15 @@
 #ifndef ASSIGNMENT1_LINKED_LIST_H
 #define ASSIGNMENT1_LINKED_LIST_H
 
-#include <string>
-
+/**
+ * Simple Linked List class
+ *
+ * Includes protected functions to insert, edit, and delete nodes
+ * at a provided position in the list. As this is a class template,
+ * Node data is not confined to any type.
+ *
+ */
+template <class T>
 class LinkedList {
 public:
     LinkedList();
@@ -14,19 +21,19 @@ public:
 
 protected:
     int m_size;
-    std::string getNodeData(int line_num);
-    void insertNode(int line_num, std::string data);
-    void editNode(int line_num, std::string data);
+    T getNodeData(int line_num);
+    void insertNode(int line_num, T data);
+    void editNode(int line_num, T data);
     void deleteNode(int position);
-    void updateNodePositions();
 
 private:
     struct Node {
         int m_position;
-        std::string m_data;
+        T m_data;
         Node * m_next;
     };
     Node * m_head;
+    void updateNodePositions();
 
 };
 

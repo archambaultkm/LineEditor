@@ -6,9 +6,17 @@
 #define ASSIGNMENT1_LINE_EDITOR_H
 
 #include"../inc/linked_list.h"
+#include"../src/linked_list.cpp"
 #include <fstream>
+#include <string>
 
-class LineEditor : LinkedList {
+/**
+ * Extends Linked List class to implement file i/o and parse operations to perform on list
+ *
+ * Paragraph description
+ *
+ */
+class LineEditor : LinkedList<std::string> {
 public:
     ~LineEditor() override;
     LineEditor();

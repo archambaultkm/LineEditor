@@ -3,13 +3,16 @@
 //
 
 #include "../inc/linked_list.h"
+#include <string>
 
-LinkedList::LinkedList() {
+template <class T>
+LinkedList<T>::LinkedList() {
     m_size = 0;
     m_head = nullptr;
 }
 
-LinkedList::~LinkedList() = default;
+template <class T>
+LinkedList<T>::~LinkedList() = default;
 
 /**
  * Inserts a new Node in Linked List
@@ -18,7 +21,8 @@ LinkedList::~LinkedList() = default;
  * @param data text for the new node to hold
  * @note also increases List m_size property and calls function to update other node positions
  */
-void LinkedList::insertNode(int line_num, std::string data) {
+template <class T>
+void LinkedList<T>::insertNode(int line_num, T data) {
     if (line_num <= 0 || line_num > m_size + 1) return;
 
     Node * temp = new Node();
@@ -63,7 +67,8 @@ void LinkedList::insertNode(int line_num, std::string data) {
  * @param line_num m_position of node to edit
  * @param data text to replace the existing Node m_data
  */
-void LinkedList::editNode(int line_num, std::string data) {
+template <class T>
+void LinkedList<T>::editNode(int line_num, T data) {
     if (line_num <= 0 || line_num > m_size) return;
 
     Node * curr = m_head;
@@ -77,7 +82,8 @@ void LinkedList::editNode(int line_num, std::string data) {
  * @param line_num m_position of node to delete
  * @note also decreases List m_size property and calls function to update other node positions
  */
-void LinkedList::deleteNode(int position) {
+template <class T>
+void LinkedList<T>::deleteNode(int position) {
     if (position <= 0 || position > m_size) return;
 
     Node * curr = m_head;
@@ -110,7 +116,8 @@ void LinkedList::deleteNode(int position) {
  *
  * @note called after inserting or deleting a node
  */
-void LinkedList::updateNodePositions() {
+template <class T>
+void LinkedList<T>::updateNodePositions() {
     Node * line = m_head;
     Node * prev = nullptr;
 
@@ -131,7 +138,8 @@ void LinkedList::updateNodePositions() {
  * @param line_num m_position in list of node to delete
  * @returns Node m_data property (string)
  */
-std::string LinkedList::getNodeData(int line_num) {
+template <class T>
+T LinkedList<T>::getNodeData(int line_num) {
     if (line_num <= 0 || line_num > m_size) return "";
 
     Node * curr = m_head;
