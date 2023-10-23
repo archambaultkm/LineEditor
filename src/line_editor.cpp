@@ -45,7 +45,7 @@ void LineEditor::execute(const std::string& input) {
 
     switch (m_operation) {
         case Not_An_Operation:
-            // If they haven't entered a valid m_operation, assume they're trying to insert text on the displayed line
+            // If they haven't entered a valid operation, assume they're trying to insert text on the displayed line
             this->insertNode(m_working_line, m_user_input);
             m_working_line++;
 
@@ -74,20 +74,37 @@ void LineEditor::execute(const std::string& input) {
 
         case Delete:
             if (m_iter_start <= 0 || m_iter_end > m_size) return;
-            for (int i=m_iter_start; i <= m_iter_end; i++) this->deleteNode(m_iter_start);
 
+            for (int i=m_iter_start; i <= m_iter_end; i++)
+                this->deleteNode(m_iter_start);
+
+            //don't allow the working line to exceed the end of the document
             if (m_working_line > m_size) m_working_line = m_size + 1;
 
             break;
 
         case List:
+
             if (m_iter_start <= 0 || m_iter_end > m_size) return;
-            for (int i=m_iter_start; i <= m_iter_end; i++) {
-                // don't allow printing of lines outside document bounds
-                if (i <= 0 || i > m_size) break;
-                std::cout << i << "> " << this->getNodeData(i) << std::endl;
+
+            //if only one line is requested, print just that line
+            if (m_iter_end == m_iter_start) {
+                std::cout << m_iter_start << "> " << this->getNodeData(m_iter_start) << std::endl;
+
+            } else {
+                //rather than iterating through the whole list for each line, use a function that returns a vector of node data
+                std::vector<std::string> lines_to_print = this->getNodeData(m_iter_start, m_iter_end);
+
+                //the line prompt is not related to the vector index of the data being printed, so keep track of it separately.
+                int line_prompt = m_iter_start;
+
+                for (const auto & i : lines_to_print) {
+                    std::cout << line_prompt << "> " << i << std::endl;
+                    line_prompt++;
+                }
             }
 
+            //set the working line to directly after the end of whatever got printed
             if (m_iter_end >= 1 && m_iter_end <= m_size) m_working_line = m_iter_end + 1;
 
             break;

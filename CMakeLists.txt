@@ -7,7 +7,6 @@ add_executable(assignment1
         src/main.cpp
         src/line_editor.cpp
         inc/line_editor.h
-        src/linked_list.cpp
         inc/linked_list.h
         src/file_manager.cpp
         inc/file_manager.h

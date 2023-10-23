@@ -7,7 +7,6 @@
 #define ASSIGNMENT1_LINE_EDITOR_H
 
 #include"../inc/linked_list.h"
-#include"../src/linked_list.cpp"
 #include <fstream>
 #include <string>
 
