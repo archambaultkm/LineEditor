@@ -9,12 +9,12 @@
 #include <regex>
 #include "../inc/line_editor.h"
 
-LineEditor::LineEditor() {
-    m_operation = Not_An_Operation;
-    m_iter_start = 0;
-    m_iter_end = 0;
-    m_working_line = 1;
-}
+LineEditor::LineEditor() :
+    m_operation(Not_An_Operation),
+    m_iter_start(0),
+    m_iter_end(0),
+    m_working_line(1)
+    {}
 
 LineEditor::~LineEditor() = default;
 
@@ -37,44 +37,37 @@ bool LineEditor::isEditing() {
  * validation away from the main program so that the class is reusable
  * anywhere
  */
-void LineEditor::execute(const std::string& input) {
+void LineEditor::execute(std::string& input) {
     if (!isValidOperation(input)) {
-        m_user_input = input;
         m_operation = Not_An_Operation;
     } else initOperations(input);
+
+    // any case other than "not an operation" needs to have a possible iteration range
+    if (m_operation != Not_An_Operation && (m_iter_start <= 0 || m_iter_end > m_size)) return;
 
     switch (m_operation) {
         case Not_An_Operation:
             // If they haven't entered a valid operation, assume they're trying to insert text on the displayed line
-            this->insertNode(m_working_line, m_user_input);
+            this->insertNode(m_working_line, input);
             m_working_line++;
 
             break;
 
-        case Exit:
-
-            break;
-
         case Insert:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-            // "Insert" just moves the line
+            // "Insert" just moves the cursor
             m_working_line = m_iter_start;
 
             break;
 
         case Revise:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-
             std::cout << m_iter_start << "> ";
-            getline(std::cin, m_user_input);
+            getline(std::cin, input);
 
-            this->editNode(m_iter_start, m_user_input);
+            this->editNode(m_iter_start, input);
 
             break;
 
         case Delete:
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-
             for (int i=m_iter_start; i <= m_iter_end; i++)
                 this->deleteNode(m_iter_start);
 
@@ -84,9 +77,6 @@ void LineEditor::execute(const std::string& input) {
             break;
 
         case List:
-
-            if (m_iter_start <= 0 || m_iter_end > m_size) return;
-
             //if only one line is requested, print just that line
             if (m_iter_end == m_iter_start) {
                 std::cout << m_iter_start << "> " << this->getNodeData(m_iter_start) << std::endl;
@@ -95,7 +85,7 @@ void LineEditor::execute(const std::string& input) {
                 //rather than iterating through the whole list for each line, use a function that returns a vector of node data
                 std::vector<std::string> lines_to_print = this->getNodeData(m_iter_start, m_iter_end);
 
-                //the line prompt is not related to the vector index of the data being printed, so keep track of it separately.
+                //the line prompt is not related to the vector index of the data being printed, so assign it separately.
                 int line_prompt = m_iter_start;
 
                 for (const auto & i : lines_to_print) {
@@ -106,6 +96,10 @@ void LineEditor::execute(const std::string& input) {
 
             //set the working line to directly after the end of whatever got printed
             if (m_iter_end >= 1 && m_iter_end <= m_size) m_working_line = m_iter_end + 1;
+
+            break;
+
+        case Exit:
 
             break;
     }
@@ -150,51 +144,46 @@ bool LineEditor::isValidOperation(const std::string& input) {
  */
 void LineEditor::initOperations(const std::string& input) {
     m_iter_start = 0, m_iter_end = 0;
-    std::vector<std::string> args;
-    std::string arg;
 
-    // use a stream and vector for easy parsing
+    // Split the input string into arguments
     std::istringstream input_stream(input);
-    while (input_stream >> arg) args.push_back(arg);
+    std::vector<std::string> args(std::istream_iterator<std::string>{input_stream},
+                                  std::istream_iterator<std::string>());
 
+    if (args.empty()) return; // No valid arguments
+
+    // Determine the operation
     m_operation = resolveOperations(args.at(0));
-    // this moves the "cursor" up a line if the user gives no range argument for insert, edit, or delete
-    if (m_working_line != 1) m_iter_start = m_working_line - 1;
 
-    // List has a special case for no number arguments
-    if (args.size() == 1 && m_operation == List) {
+    // List operation has default values for if no range is provided
+    if (m_operation == List) {
         m_iter_start = 1;
-        m_iter_end = m_size;
-        if (m_iter_end == 0) m_iter_end = 1;
-
-        return;
+        m_iter_end = (m_size > 0) ? m_size : 1;
     }
 
-    // reassign iteration range if values were provided
+    // parse m_iter_start and m_iter_end if a value was provided
     if (args.size() >= 2) {
         try {
-            m_iter_start = stoi(args.at(1));
-        } catch(std::out_of_range& e) { return; }
+            m_iter_end = m_iter_start = stoi(args[1]);
 
-        // user is re-prompted for input if 0 is given explicitly as an argument
-        if (m_iter_start == 0) return;
+            if (m_iter_start == 0) return; // User is re-prompted for input
+        } catch (std::out_of_range& e) {
+            return;
+        }
     }
 
+    // parse m_iter_end if a value was provided
     if (args.size() == 3) {
         try {
-            m_iter_end = stoi(args.at(2));
-        } catch(std::out_of_range& e) { return; }
-
-    } else {
-        // for looping purposes, iter_end=start unless user provided a value
-        m_iter_end = m_iter_start;
+            m_iter_end = stoi(args[2]);
+        } catch (std::out_of_range& e) {
+            return;
+        }
     }
 
-    // make sure the range is positive
+    // Ensure the range is positive
     if (m_iter_start > m_iter_end && m_iter_end != 0) {
-        int temp = m_iter_end;
-        m_iter_end = m_iter_start;
-        m_iter_start = temp;
+        std::swap(m_iter_start, m_iter_end);
     }
 }
 

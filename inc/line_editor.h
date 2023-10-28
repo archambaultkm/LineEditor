@@ -25,7 +25,7 @@ public:
     LineEditor();
     int getWorkingLine() const;
     bool isEditing();
-    void execute(const std::string& input);
+    void execute(std::string& input);
     friend std::ostream& operator<<(std::ostream& output, LineEditor& line_editor);
     friend std::stringstream& operator<<(std::stringstream& output, LineEditor& line_editor);
     friend std::istream &operator>>(std::istream& input, LineEditor& line_editor);

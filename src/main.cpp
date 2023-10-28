@@ -25,10 +25,12 @@ int main(int argc, char *argv[]) {
     if (argc == 3 && strcmp(argv[1], "edit") == 0) {
         if (!isValidFilePath(argv[2])) {
             cout << "Must enter a valid .txt format file name" << endl;
+
             return 1;
         }
     } else {
         cout << "Invalid arguments" << endl;
+
         return 1;
     }
 
@@ -47,7 +49,7 @@ int main(int argc, char *argv[]) {
 
     } while (line_editor.isEditing());
 
-    //when the editor is exited, read the line editor to a stream and save contents to file
+    // when the editor is exited, read the line editor to a stream and save contents to file
     std::stringstream editor_contents;
     editor_contents << line_editor;
     file_manager.writeStreamToFile(file_name, std::move(editor_contents));
